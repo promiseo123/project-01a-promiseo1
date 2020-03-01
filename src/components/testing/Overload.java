@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * DESCRIPTION
  *
- * @author YOUR NAME HERE
+ * @author Promise Omiponle, poo9724@rit.edu
  */
 public class Overload {
 
