@@ -1,27 +1,18 @@
 package components;
 
 public class Switchable extends Component {
-    protected boolean isOn;
+    protected boolean isOn=false;
 
     public Switchable(String name, Component source) {
         super(name, source);
-        Reporter.report(this, Reporter.Msg.CREATING);
     }
 
     @Override
-    public void engage() {
-        if(!this.engaged()&&getSource()==null) {
-            this.engage=true;
-            if(this.isOn) {
-                for(Component load : this.loads) {
-                    load.engage();
-                    this.changeDraw(load.getDraw());
-                }
-            }
-        } else {
-            this.source.engage();
+    public void engageLoads() {
+        if(this.isOn) {
+            super.engageLoads();
         }
-        Reporter.report(this, Reporter.Msg.ENGAGING);
+
     }
 
     @Override
@@ -39,23 +30,29 @@ public class Switchable extends Component {
     }
 
     public void turnOn() {
-        this.isOn=true;
+
         if(this.engaged()) {
-            this.source.changeDraw(this.draw);
+            this.isOn=true;
+            Reporter.report(this, Reporter.Msg.SWITCHING_ON);
+            engageLoads();
+//            this.source.changeDraw(this.draw);
         }
-        Reporter.report(this, Reporter.Msg.SWITCHING_ON);
+
     }
 
     public void turnOff() {
         this.isOn=false;
+        Reporter.report(this, Reporter.Msg.SWITCHING_OFF);
         if(this.engaged()) {
             this.source.changeDraw(-this.draw);
+            this.draw-=this.draw;
         }
-        Reporter.report(this, Reporter.Msg.SWITCHING_OFF);
+
     }
 
     public boolean isSwitchOn() {
         return this.isOn;
     }
+
 
 }

@@ -1,19 +1,20 @@
 package components;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public abstract class Component {
     private String name;
     protected Component source;
-    protected HashSet<Component> loads=new HashSet<>();
+    protected LinkedHashSet<Component> loads=new LinkedHashSet<>();
     protected int draw=0;
     protected boolean engage=false;
 
     protected Component(String name, Component source) {
         this.name=name;
         this.source=source;
-        Reporter.report(this, Reporter.Msg.CREATING);
     }
 
     public String getName() {
@@ -31,7 +32,7 @@ public abstract class Component {
             }
             addLoad(load);
         }
-        Reporter.report(this, Reporter.Msg.ATTACHING);
+        Reporter.report(this, load, Reporter.Msg.ATTACHING );
     }
 
     protected int getDraw() {
@@ -39,15 +40,17 @@ public abstract class Component {
     }
 
     protected Collection<Component> getLoads() {
-        return this.loads;
+        return Collections.unmodifiableCollection(this.loads);
     }
 
     protected void changeDraw(int delta) {
         this.draw+=delta;
+        Reporter.report(this, Reporter.Msg.DRAW_CHANGE, delta);
         if(this.source!=null) {
             this.source.changeDraw(delta);
         }
-        Reporter.report(this, Reporter.Msg.DRAW_CHANGE);
+
+
     }
 
     protected void addLoad(Component newLoad) {
@@ -55,27 +58,17 @@ public abstract class Component {
     }
 
     public void engage() {
-        if(!this.engaged()&&getSource()==null) {
-            this.engage=true;
-            for(Component load : this.loads) {
-                load.engage();
-                this.changeDraw(load.draw);
-            }
-        } else {
-            this.source.engage();
-        }
+        this.engage=true;
         Reporter.report(this, Reporter.Msg.ENGAGING);
+        engageLoads();
     }
 
     public void disengage() {
+        Reporter.report(this, Reporter.Msg.DISENGAGING);
         if(this.engaged()) {
             this.engage=false;
-            for(Component load : this.loads) {
-                load.disengage();
-                this.changeDraw(-load.draw);
-            }
+            disengageLoads();
         }
-        Reporter.report(this, Reporter.Msg.DISENGAGING);
 
     }
 
@@ -100,11 +93,13 @@ public abstract class Component {
     }
 
     public void display() {
+        System.out.println("");
         System.out.println("+ "+this.toString());
         for(Component load : this.loads) {
             System.out.print("    ");
             load.display();
         }
+        System.out.println("");
     }
 
     public String toString() {

@@ -52,6 +52,13 @@ public class Overload {
 
     public static void main( String[] args ) {
         System.out.println( "Overload Project, CS2" );
+        try ( Scanner configFile = new Scanner( new File( args[1] ) ) ) {
+            while ( configFile.hasNextLine() ) {
+                // Process the next line of the file.
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }
