@@ -3,7 +3,7 @@ package components;
 public class CircuitBreaker extends Switchable {
     private int limit;
 
-    public CircuitBreaker(String name, PowerSource source, int limit) {
+    public CircuitBreaker(String name, Component source, int limit) {
         super(name, source);
         Reporter.report(this, Reporter.Msg.CREATING);
         this.source.attach(this);
